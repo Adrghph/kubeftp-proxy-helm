@@ -49,16 +49,16 @@ Before deploying kubeftp-proxy-helm, make sure you have :
 
 ## Installation
 
-1. Clone the repository and configure
+1. Clone the repository
 
 ```bash
-git clone https ://github.com/adrghph/kubeftp-proxy-helm.git
+git clone https://github.com/adrghph/kubeftp-proxy-helm.git
 cd kubeftp-proxy-helm
 ```
 
-Configure your values.yaml (see below Configuration)
+2. Configure your values.yaml (see below Configuration)
 
-2. Create and install into a dedicated namespace (recommended)
+3. Create and install into a dedicated namespace (recommended)
 
 ```bash
 helm install vsftpd ./kubeftp-proxy-helm --namespace <namespace> --create-namespace
