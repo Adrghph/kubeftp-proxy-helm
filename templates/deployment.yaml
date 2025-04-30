@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app.kubernetes.io/name: {{ include "vsftpd-helm.name" . }}
+    helm.sh/chart: {{ include "vsftpd-helm.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "vsftpd-helm.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "vsftpd-helm.name" . }}
+        helm.sh/chart: {{ include "vsftpd-helm.chart" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+    spec:
+      containers:
+        - name: vsftpd
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: FTP_USER
+              value: {{ .Values.ftp.username | quote }}
+            - name: FTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}
+                  key: ftp-password
+            - name: PASV_ADDRESS
+              value: {{ .Values.ftp.pasvAddress | quote }}
+            - name: PASV_ENABLE
+              value: "YES"
+            - name: PASV_MIN_PORT
+              value: {{ .Values.ftp.pasvMinPort | quote }}
+            - name: PASV_MAX_PORT
+              value: {{ .Values.ftp.pasvMaxPort | quote }}
+            - name: PASV_PROMISCUOUS
+              value: "YES"
+          ports:
+            - containerPort: {{ .Values.ftp.controlPort }}
+            - containerPort: {{ .Values.ftp.dataPort }}
+            {{- range $index, $port := untilStep (int .Values.ftp.pasvMinPort) (int (add1 (int .Values.ftp.pasvMaxPort))) 1 }}
+            - containerPort: {{ $port }}
+            {{- end }}
+          volumeMounts:
+            - name: home
+              mountPath: "/home/vsftpd"
+            - name: logs
+              mountPath: "/var/log/vsftpd"
+      volumes:
+        - name: home
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-home-pvc
+        - name: logs
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-logs-pvc
+

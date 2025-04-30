@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vsftpd-haproxy-config
+  namespace: {{ .Release.Namespace }}
+data:
+  haproxy.cfg: |-
+    global
+      log /dev/log local0
+      log /dev/log local1 notice
+      daemon
+      maxconn 4096
+
+    defaults
+      mode tcp
+      option tcplog
+      option dontlognull
+      timeout connect 5s
+      timeout client {{ .Values.haproxy.timeout }}
+      timeout server {{ .Values.haproxy.timeout }}
+
+    #FTP Control connection
+    frontend ftp-control
+      bind {{ .Values.ftp.pasvAddress }}:{{ .Values.ftp.controlPort }}
+      default_backend ftp-control-backend
+
+    backend ftp-control-backend
+      mode tcp
+      balance leastconn
+      stick-table type ip size 100k expire 1h
+      stick on src
+{{- range $index, $ip := .Values.haproxy.nodesIPs }}
+      server node{{ add (int $index) 1 }} {{ $ip }}:{{ int $.Values.service.nodePortCommand }} check
+{{- end }}
+
+    #FTP Data connection
+    frontend ftp-data
+      bind {{ .Values.ftp.pasvAddress }}:{{ .Values.ftp.dataPort }}
+      default_backend ftp-data-backend
+
+    backend ftp-data-backend
+      mode tcp
+{{- range $index, $ip := .Values.haproxy.nodesIPs }}
+      server node{{ add (int $index) 1 }} {{ $ip }}:{{ int $.Values.service.nodePortData }}
+{{- end }}
+
+    #FTP Passive ports
+{{- $pasvMinPort := int .Values.ftp.pasvMinPort }}
+{{- $pasvMaxPort := int .Values.ftp.pasvMaxPort }}
+{{- $baseNodePort := int .Values.service.nodePortPassiveMin }}
+{{- $pasvMaxPortPlusOne := int (add $pasvMaxPort 1) }}
+{{- range $port := until $pasvMaxPortPlusOne }}
+{{- if ge (int $port) $pasvMinPort }}
+    frontend ftp-passive-{{ $port }}
+      bind {{ $.Values.ftp.pasvAddress }}:{{ $port }}
+      default_backend ftp-passive-{{ $port }}-backend
+{{- end }}
+{{- end }}
+
+{{- range $port := until $pasvMaxPortPlusOne }}
+{{- if ge (int $port) $pasvMinPort }}
+    backend ftp-passive-{{ $port }}-backend
+      mode tcp
+{{- range $index, $ip := $.Values.haproxy.nodesIPs }}
+      server node{{ add (int $index) 1 }} {{ $ip }}:{{ add $baseNodePort (sub (int $port) $pasvMinPort) }}
+{{- end }}
+{{- end }}
+{{- end }}

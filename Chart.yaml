@@ -1,0 +1,6 @@
+apiVersion: v2
+name: kubeftp-proxy-helm
+description: Helm chart to deploy a Passive FTP server (vsftpd) in NodePort mode on Kubernetes, with automatic HAProxy configuration generation for Passive FTP/FTPS support.
+type: application
+version: 0.1.0
+appVersion: "3.0.2"

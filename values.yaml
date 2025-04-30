@@ -1,0 +1,36 @@
+ftp:
+  username: "user"  
+  password: "pass"  
+  pasvAddress: ""   #Passive IP address (set to your external HAProxy)
+  controlPort: 21   #FTP control port (default: 21)
+  dataPort: 20      #FTP data port (default: 20)
+  pasvMinPort: 21100  #Minimum passive port (example: 21100)
+  pasvMaxPort: 21110  #Maximum passive port (example: 21110)
+
+service:
+  type: NodePort   #Kubernetes Service type (NodePort or LoadBalancer)
+  nodePortCommand: 30021  #NodePort for control connection (port 21)
+  nodePortData: 30020     #NodePort for data connection (port 20)
+  nodePortPassiveMin: 32100  #First NodePort for passive data connections
+
+image:
+  repository: fauria/vsftpd  
+  tag: latest                
+  pullPolicy: IfNotPresent   
+
+persistence:
+  home:
+    enabled: true             
+    size: "1Gi"                
+    storageClassName: ""  
+  logs:
+    enabled: true             
+    size: "100Mi"             
+    storageClassName: ""  
+
+haproxy:
+  timeout: "10m"   #Timeout for both client and server inactivity ("5s", "30s", "5m", "10m")
+  nodesIPs:
+    - 10.0.0.1   #Replace with your first worker node IP
+    - 10.0.0.2   #Replace with your second worker node IP
+    - 10.0.0.3   #Replace with your third worker node IP

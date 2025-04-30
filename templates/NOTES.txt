@@ -1,0 +1,30 @@
+VSFTPD FTP Server information:
+
+Pasv Address: {{ .Values.ftp.pasvAddress }}
+Control Port: {{ .Values.ftp.controlPort }}
+Data Port: {{ .Values.ftp.dataPort }}
+Passive Ports Range: {{ .Values.ftp.pasvMinPort }} - {{ .Values.ftp.pasvMaxPort }}
+
+HAProxy backend worker nodes IPs:
+{{- range .Values.haproxy.nodesIPs }}
+- {{ . }}
+{{- end }}
+
+---
+
+HAProxy Configuration:
+
+The HAProxy configuration file is automatically generated and stored in the following Kubernetes ConfigMap:
+
+  Name: {{ .Release.Name }}-haproxy-config
+  Namespace: {{ .Release.Namespace }}
+
+You can retrieve it using:
+
+  kubectl get configmap {{ .Release.Name }}-haproxy-config -n {{ .Release.Namespace }} -o yaml
+
+or extract the HAProxy configuration directly into a file:
+
+  kubectl get configmap {{ .Release.Name }}-haproxy-config -n {{ .Release.Namespace }} -o jsonpath='{.data.haproxy\.cfg}' > haproxy.cfg
+
+---
