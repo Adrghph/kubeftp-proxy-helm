@@ -61,7 +61,7 @@ cd kubeftp-proxy-helm
 3. Create and install into a dedicated namespace (recommended)
 
 ```bash
-helm install vsftpd ./kubeftp-proxy-helm --namespace <namespace> --create-namespace
+helm install vsftpd . --namespace <namespace> --create-namespace
 ```
 
 ## Configuration
@@ -101,7 +101,7 @@ kubectl get configmap my-ftp-haproxy-config -n <namespace> -o yaml
 ```
 To extract the configuration directly into a file :
 ```bash
-kubectl get configmap my-ftp-haproxy-config -n <namespace> -o jsonpath='{.data.haproxy\.cfg}' > haproxy.cfg
+kubectl get configmap vsftpd-haproxy-config -n <namespace> -o jsonpath='{.data.haproxy\.cfg}' > haproxy.cfg
 ```
 ## Apply conf HAproxy 
 
