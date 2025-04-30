@@ -118,14 +118,18 @@ ftp <pasvAddress>
 ```
 
 ## Important Notes
+
 •	Designed for use with a standalone HAProxy capable of TCP traffic forwarding to Kubernetes NodePorts.
+
 •	The generated haproxy.cfg should be deployed on the HAProxy machine to enable proper FTP Passive mode functionality.
+
 •	In environments where LoadBalancer services allow full control over port mappings (such as custom MetalLB deployments or cloud LBs with port-range support), kubeftp-proxy-helm can work without an additional HAProxy server and can work with service in LoadBalancer mode. 
 
 ## Why this project
+
 Kubernetes is not natively designed for FTP services, especially for Passive Mode, which requires fine-grained control over open ports and connections.
 This project was born out of the need to work around this limitation in a real-world infrastructure, by leveraging HAProxy and stable NodePorts in a predictable and resilient way.
-kubeftp-proxy-helm offers a simple, reliable, and maintainable solution to integrate a fully functional FTP server into a multi-node Kubernetes cluster without sacrificing compatibility with standard FTP clients.
+
 The idea emerged while facing challenges with a HAProxy supervised by a Tanzu Supervisor Cluster, where direct configuration changes were restricted.
 This Helm chart was designed to provide flexibility and control at the Kubernetes layer, while enabling seamless integration with external load balancers under constrained environments.
 Link incoming  
