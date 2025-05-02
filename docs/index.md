@@ -1,0 +1,1 @@
+# Passive FTP Server exposure Through Standalone HAProxy on Tanzu Kubernetes Grid — Bypassing Supervisor-Managed Load Balancer Limitations via Dual-VM and NodePort Strategy 
