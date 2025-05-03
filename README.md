@@ -127,9 +127,13 @@ ftp <pasvAddress>
 
 ## Why this project
 
-Kubernetes is not natively designed for FTP services, especially for Passive Mode, which requires fine-grained control over open ports and connections.
-This project was born out of the need to work around this limitation in a real-world infrastructure, by leveraging HAProxy and stable NodePorts in a predictable and resilient way.
+Kubernetes is not designed to handle FTP services out of the box, especially in Passive Mode, which requires precise control over multiple dynamic ports and connection flows.
 
-The idea emerged while facing challenges with a HAProxy supervised by a Tanzu Supervisor Cluster, where direct configuration changes were restricted.
-This Helm chart was designed to provide flexibility and control at the Kubernetes layer, while enabling seamless integration with external load balancers under constrained environments.
-Link incoming  
+This Helm chart was created as part of a broader solution to address these limitations in a VMware Tanzu Kubernetes Grid (TKG) environment, where the Supervisor-managed HAProxy does not allow the flexibility needed for passive FTP traffic.
+
+The chart provides a clean and reproducible way to deploy a vsftpd server within a TKG cluster, using explicitly defined NodePorts. These ports are then used by a standalone HAProxy VM, deployed and configured manually, to handle FTP traffic reliably and in full compliance with protocol requirements.
+
+This project complements the following architecture and technical deep dive:
+
+https://github.com/adrghph/ftp-in-tanzu
+
