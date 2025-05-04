@@ -66,6 +66,20 @@ helm install vsftpd . --namespace <namespace> --create-namespace
 
 ## Configuration
 
+**pasvAddress**  : Passive IP address to advertise to FTP clients. Set this to the IP address of the HAProxy interface accessible by external FTP clients (usually on the frontend/public network). This is the IP that FTP clients will use to initiate passive data connections.
+
+For example, if your HAProxy has:
+
+**Frontend interface**: 203.0.113.15 (reachable by FTP clients)
+
+**Backend interface**: 10.0.0.10 (used to reach Kubernetes nodes)
+
+Then you should set:
+
+```bash
+pasvAddress: "203.0.113.15"
+```
+
 | Parameter                | Description                                                               | Default Value           |
 |---------------------------|---------------------------------------------------------------------------|--------------------------|
 | `username`                | FTP username                                                              | `user`                   |
