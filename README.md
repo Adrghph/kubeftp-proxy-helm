@@ -58,7 +58,7 @@ cd kubeftp-proxy-helm
 
 2. Configure your values.yaml (see below Configuration)
 
-**Before you continue** : If you want to enable FTPS, read the dedicated section. Otherwise, skip straight to step 3 to deploy plain FTP.
+**Before you continue** : To enable FTPS, check the dedicated section below before running the Helm installation.
 
 3. Create and install into a dedicated namespace (recommended)
 
