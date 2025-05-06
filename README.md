@@ -13,7 +13,10 @@ Designed to maintain FTP connectivity even when pods move across nodes.
 
 ![KubeFTP Architecture](images/schema.jpg)
 
-Docker source image  : fauria/docker-vsftpd
+Docker source images:
+
+- For standard FTP: `fauria/docker-vsftpd`
+- For FTPS (Explicit TLS): `markhobson/vsftpd`
 
 ## Main Features
 - Deploys a vsftpd server inside Kubernetes.
