@@ -15,7 +15,7 @@ Designed to maintain FTP connectivity even when pods move across nodes.
 
 Docker source images:
 
-- For standard FTP: `fauria/docker-vsftpd`
+- For standard FTP: `fauria/vsftpd`
 - For FTPS (Explicit TLS): `markhobson/vsftpd`
 
 ## Main Features
