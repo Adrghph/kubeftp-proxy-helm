@@ -58,7 +58,7 @@ cd kubeftp-proxy-helm
 
 2. Configure your values.yaml (see below Configuration)
 
-**Before you continue** : To enable FTPS, check the dedicated section below before running the Helm installation.
+**Want FTPS support** ? You can follow the FTPS Setup before running the Helm install to enable secure access.
 
 3. Create and install into a dedicated namespace (recommended)
 
@@ -135,7 +135,7 @@ Once deployed and HAProxy is configured correctly, you can connect to the FTP se
 ftp <pasvAddress>
 ```
 
-## FTPS (Explicit FTP over TLS)
+## FTPS Setup (Explicit FTP over TLS)
 
 Follow these steps before installing the chart if you need secure FTPS for access from compatible clients (FileZilla, lftp, WinSCP, etc..)
 
