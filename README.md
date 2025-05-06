@@ -58,6 +58,8 @@ cd kubeftp-proxy-helm
 
 2. Configure your values.yaml (see below Configuration)
 
+**Before you continue** : If you want to enable FTPS, read the dedicated section. Otherwise, skip straight to step 3 to deploy plain FTP.
+
 3. Create and install into a dedicated namespace (recommended)
 
 ```bash
@@ -124,12 +126,64 @@ Once you've retrieved the generated configuration (haproxy.cfg), simply copy and
 ```bash
 systemctl restart haproxy
 ```
+
 ## Access to ftp server as client 
 
 Once deployed and HAProxy is configured correctly, you can connect to the FTP service using any standard FTP client.
+
 ```bash
 ftp <pasvAddress>
 ```
+
+## FTPS (Explicit FTP over TLS)
+
+Follow these steps before installing the chart if you need secure FTPS for access from compatible clients (FileZilla, lftp, WinSCP, etc..)
+
+1 - Create the TLS secret with cert.pem / key.pem  : 
+
+```bash
+kubectl -n <namespace> create secret generic vsftpd-cert --from-file=cert.pem --from-file=key.pem
+```
+
+2 - Update values.yaml : 
+
+```bash
+image: 
+  repository: markhobson/vsftpd # Use this FTPS‑ready image
+
+ftps: # Add this section
+  secretName: vsftpd-cert 
+  certFile: cert.pem      
+  keyFile:  key.pem       
+```
+
+3 - Patch templates/deployment.yaml
+
+```bash
+          env:
+	    ...
+            - name: SSL_ENABLE
+              value: "YES"
+            - name: TLS_CERT
+              value: {{ .Values.ftps.certFile | quote }}
+            - name: TLS_KEY
+              value: {{ .Values.ftps.keyFile | quote }}
+
+          volumeMounts:
+            ...
+            - name: vsftpd-cert
+              mountPath: /etc/vsftpd/cert   
+              readOnly: true
+  
+      volumes:
+        ...
+        - name: vsftpd-cert
+          secret:
+            secretName: {{ .Values.ftps.secretName }}
+```
+
+4 - Return to step **3** of the **Installation** section and run the usual Helm command
+
 
 ## Important Notes
 
